@@ -1,51 +1,64 @@
-import com.aspose.cells.*;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 
-/**
- * Created by sczerwinski on 2016-02-02.
- */
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
+
 public class Parser {
     public static void main(String[] args) {
 
         DataProvider dataProvider = new DataProvider("http://susza.iung.pulawy.pl/tabele/0201011/");
-        ParsedData parsedData = dataProvider.getData();
+        ParsedSoilCategoryTable parsedSoilCategoryTable = dataProvider.getSoilCategoryTable();
+        Header header = dataProvider.getHeader();
 
-        System.out.println("Header: " + parsedData.getHeader().text());
-        System.out.println("Wojewodztwo: " + parsedData.getProvince().text());
-        System.out.println("Powiat: " + parsedData.getDistrict().text());
-        //System.out.println("Soil category table: " + parsedData.getSoilCategoryTable().toString());
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Sample sheet");
 
-////Instantiate the workbook object
-//        Workbook workbook = new Workbook();
+
+        int rownum = 0;
+
+        Row row = sheet.createRow(rownum++);
+        for (int i = header.; i<parsedSoilCategoryTable.getTableHeaders().size();i++){
+            Cell cell = row.createCell(i);
+            cell.setCellValue(parsedSoilCategoryTable.getTableHeaders().get(i));
+        }
+
+
+
+//        for (String key : keyset) {
+//            Row row = sheet.createRow(rownum++);
+//            Object [] objArr = data.get(key);
+//            int cellnum = 0;
+//            for (Object obj : objArr) {
+//                Cell cell = row.createCell(cellnum++);
+//                if(obj instanceof Date)
+//                    cell.setCellValue((Date)obj);
+//                else if(obj instanceof Boolean)
+//                    cell.setCellValue((Boolean)obj);
+//                else if(obj instanceof String)
+//                    cell.setCellValue((String)obj);
+//                else if(obj instanceof Double)
+//                    cell.setCellValue((Double)obj);
 //
-////Get first worksheet of workbook
-//        Worksheet worksheet1 = workbook.getWorksheets().get(0);
-//
-////Get Cells in a Worksheet
-//        Cells cells = worksheet1.getCells();
-//
-////Get the individual cell
-//        Cell cell = cells.get("A1");
-//
-//        String htmlstring = parsedData.getSoilCategoryTable().toString();
-//
-////Setting Cell Style
-//        Style style = new Style();
-//        style.setHorizontalAlignment(TextAlignmentType.LEFT);
-//        style.setTextWrapped(true);
-//        cell.setStyle(style);
-//
-////Set HTML string as Cell Text
-//        cell.setHtmlString(htmlstring);
-//
-//        //worksheet1.autoFitColumns();
-////        worksheet1.autoFitRows();
-//
-////Save the workbook.
-//        try {
-//            workbook.save("c:\\Sandbox\\HtmlStringtest.xlsx");
-//        } catch (Exception e) {
-//            e.printStackTrace();
+//            }
 //        }
 
+        try {
+            FileOutputStream out =
+                    new FileOutputStream(new File("C:\\Sandbox\\new.xls"));
+            workbook.write(out);
+            out.close();
+            System.out.println("Excel written successfully..");
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
