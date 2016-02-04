@@ -7,27 +7,40 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.Date;
 
 public class Parser {
     public static void main(String[] args) {
 
         DataProvider dataProvider = new DataProvider("http://susza.iung.pulawy.pl/tabele/0201011/");
         ParsedSoilCategoryTable parsedSoilCategoryTable = dataProvider.getSoilCategoryTable();
-        Header header = dataProvider.getHeader();
+//        List<String>  = dataProvider.getHeaders();
 
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Sample sheet");
 
 
         int rownum = 0;
+        Cell cell;
 
         Row row = sheet.createRow(rownum++);
-        for (int i = header.; i<parsedSoilCategoryTable.getTableHeaders().size();i++){
-            Cell cell = row.createCell(i);
-            cell.setCellValue(parsedSoilCategoryTable.getTableHeaders().get(i));
+        for (int i = 0; i<7;i++){
+            cell = row.createCell(i);
+            cell.setCellValue(dataProvider.getHeaders().get(i));
         }
+        for (int i=0;i<4;i++){
+            row = sheet.createRow(rownum++);
+            for (int j=0;j<7;j++){
+                cell = row.createCell(j);
+                if (j<4){
+                    cell.setCellValue(dataProvider.getLocationInfo().get(j));
+                }
+                else if (j>=4){
+                    cell.setCellValue(dataProvider.getSoilCategoryTable().getTableContent()[i][j-4]);
+                }
 
+            }
+        }
 
 
 //        for (String key : keyset) {
