@@ -6,9 +6,9 @@ import java.util.List;
 public class ParsedSoilCategoryTable {
 
     private List<String> tableHeaders;
-    private String[][] tableContent;
+    private Object[][] tableContent;
 
-    public ParsedSoilCategoryTable(List<String> tableHeaders, String[][] tableContent) {
+    public ParsedSoilCategoryTable(List<String> tableHeaders, Object[][] tableContent) {
         this.tableHeaders = tableHeaders;
         this.tableContent = tableContent;
     }
@@ -17,7 +17,7 @@ public class ParsedSoilCategoryTable {
         return tableHeaders;
     }
 
-    public String[][] getTableContent() {
+    public Object[][] getTableContent() {
         return tableContent;
     }
 }
