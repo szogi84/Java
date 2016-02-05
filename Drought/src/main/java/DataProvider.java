@@ -1,6 +1,8 @@
+import enums.ReportType;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,24 +24,30 @@ public class DataProvider {
         }
     }
 
-    public List<String> getHeaders(){
+    public void fillHeadersList(ReportType reportType){
 
-//        String yearHeader;
+        //        String yearHeader;
 //        yearHeader = doc.select(".panel0 h2:eq(0)").text();
 
 //        headers.add(yearHeader.substring(yearHeader.indexOf(":")+2,yearHeader.indexOf(")")));
 //        headers.add(doc.select(".panel0 div > h3:eq(0)").text());
 //        headers.add(doc.select(".panel0 div > h3:eq(0)~a:eq(1)").text());
 //        headers.add(doc.select(".panel0 div > h3:eq(0)~a:eq(2)").text());
+
         headers.add("Rok");
         headers.add("Wojewdztwo");
         headers.add("Powiat");
         headers.add("Gmina");
 
-        for (int j=0;j<3;j++){
-            headers.add(doc.select(".panel0 .gminy").select("tr:eq(0) th:eq(" + j +")").text());
+        if(reportType.equals(ReportType.soil)){
+            for (int j=0;j<3;j++){
+                headers.add(doc.select(".panel0 .gminy").select("tr:eq(0) th:eq(" + j +")").text());
+            }
+        }else if (reportType.equals(ReportType.water)){
+            for (int j=1;j<=13;j++){
+                headers.add(String.valueOf(j));
+            }
         }
-        return headers;
     }
 
     public List<String> getLocationInfo(){
@@ -58,18 +66,35 @@ public class DataProvider {
         return locationInfoList;
     }
 
-    public ParsedSoilCategoryTable getSoilCategoryTable(){
+    public ParsedTable getSoilCategoryTable(){
 
-        ParsedSoilCategoryTable parsedSoilCategoryTable = null;
         List<String> tableHeaders = new ArrayList<String>();
-        Object[][] tableContent = new Object[4][4];
+        String[][] tableContent = new String[4][4];
 
-            for (int i = 0;i<4;i++){
-                for (int j = 0;j<3;j++){
-                    tableContent[i][j] = doc.select(".panel0 .gminy").select("tr:eq(" + (i+1) + ") td:eq(" + (j) + ")").text();
-                }
+        //TODO: Get rid of magic number
+        for (int i = 0;i<4;i++){
+            for (int j = 0;j<3;j++){
+                tableContent[i][j] = doc.select(".panel0 .gminy").select("tr:eq(" + (i+1) + ") td:eq(" + (j) + ")").text();
             }
+        }
 
-        return new ParsedSoilCategoryTable(tableHeaders,tableContent);
+        return new ParsedTable(tableHeaders,tableContent);
+    }
+
+    public ParsedTable getWaterBalanceTable(){
+        List<String> tableHeaders = new ArrayList<String>();
+        String[][] tableContent = new String[1][14];
+        //TODO: Get rid of magic number
+        for (int j = 0;j<13;j++){
+            tableContent[0][j] = doc.select(".panel1 .gminy").select("tr:eq(2) td:eq(" + (j+1) + ")").text()
+                    .replace(".",",")
+                    .replace(" * - 0", "")
+                    .replace(" - * 0", "")
+                    .replace(" x 0","")
+                    .replace(" - 0", "")
+            ;
+        }
+
+        return new ParsedTable(tableHeaders,tableContent);
     }
 }

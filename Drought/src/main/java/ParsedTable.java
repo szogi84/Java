@@ -3,12 +3,12 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParsedSoilCategoryTable {
+public class ParsedTable {
 
     private List<String> tableHeaders;
-    private Object[][] tableContent;
+    private String[][] tableContent;
 
-    public ParsedSoilCategoryTable(List<String> tableHeaders, Object[][] tableContent) {
+    public ParsedTable(List<String> tableHeaders, String[][] tableContent) {
         this.tableHeaders = tableHeaders;
         this.tableContent = tableContent;
     }
@@ -17,7 +17,7 @@ public class ParsedSoilCategoryTable {
         return tableHeaders;
     }
 
-    public Object[][] getTableContent() {
+    public String[][] getTableContent() {
         return tableContent;
     }
 }
